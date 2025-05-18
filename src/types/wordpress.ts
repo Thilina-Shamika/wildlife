@@ -92,4 +92,26 @@ export interface WordPressForm {
     submit_text: string;
     success_message: string;
   };
+}
+
+// --- Header Menu Types ---
+export interface AcfLink {
+  title: string;
+  url: string;
+  target?: string;
+}
+
+export interface HeaderMenuItem {
+  page_name: string;
+  page_link: AcfLink;
+  acf_fc_layout: 'menu-item';
+}
+
+export interface HeaderACF {
+  logo: {
+    ID: number;
+    url: string;
+    alt: string;
+  };
+  menu: HeaderMenuItem[];
 } 

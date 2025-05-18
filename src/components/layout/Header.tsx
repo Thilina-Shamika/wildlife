@@ -1,39 +1,46 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-
-const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Blog', href: '/blog' },
-  { name: 'About', href: '/about' },
-  { name: 'Contact', href: '/contact' },
-];
+import { fetchHeaderMenu } from '@/lib/api';
+import type { HeaderACF } from '@/types/wordpress';
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [header, setHeader] = useState<HeaderACF | null>(null);
+
+  useEffect(() => {
+    fetchHeaderMenu().then(setHeader);
+  }, []);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b">
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0">
-            <Link href="/" className="text-xl font-bold">
-              Your Logo
-            </Link>
+            {header?.logo ? (
+              <Link href="/" className="block">
+                <Image src={header.logo.url} alt={header.logo.alt} width={120} height={60} priority />
+              </Link>
+            ) : (
+              <span className="text-xl font-bold">Logo</span>
+            )}
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4">
-              {navigation.map((item) => (
+              {header?.menu?.map((item, idx) => (
                 <Link
-                  key={item.name}
-                  href={item.href}
+                  key={idx}
+                  href={item.page_link.url}
+                  target={item.page_link.target || '_self'}
+                  rel={item.page_link.target === '_blank' ? 'noopener noreferrer' : undefined}
                   className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                 >
-                  {item.name}
+                  {item.page_name}
                 </Link>
               ))}
             </div>
@@ -63,17 +70,19 @@ export function Header() {
             className="md:hidden"
           >
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {navigation.map((item) => (
+              {header?.menu?.map((item, idx) => (
                 <Link
-                  key={item.name}
-                  href={item.href}
+                  key={idx}
+                  href={item.page_link.url}
+                  target={item.page_link.target || '_self'}
+                  rel={item.page_link.target === '_blank' ? 'noopener noreferrer' : undefined}
                   className={cn(
                     'text-gray-600 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium transition-colors',
                     'hover:bg-gray-50'
                   )}
                   onClick={() => setIsOpen(false)}
                 >
-                  {item.name}
+                  {item.page_name}
                 </Link>
               ))}
             </div>

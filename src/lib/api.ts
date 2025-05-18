@@ -1,5 +1,5 @@
 import { API_ENDPOINTS, DEFAULT_HEADERS } from '@/config/wordpress';
-import type { WordPressPost, WordPressPage, WordPressCategory, WordPressTag, WordPressMedia, WordPressForm } from '@/types/wordpress';
+import type { WordPressPost, WordPressPage, WordPressCategory, WordPressTag, WordPressMedia, WordPressForm, HeaderACF } from '@/types/wordpress';
 
 export async function fetchPosts(params?: Record<string, string>) {
   const queryString = new URLSearchParams(params).toString();
@@ -68,4 +68,13 @@ export async function submitForm(formId: number, data: Record<string, any>) {
     body: JSON.stringify(data),
   });
   return response.json();
+}
+
+export async function fetchHeaderMenu(): Promise<HeaderACF | null> {
+  const response = await fetch(`${API_ENDPOINTS.menu}?slug=main-menu&acf_format=standard`, {
+    headers: DEFAULT_HEADERS,
+  });
+  const data = await response.json();
+  if (!data || !data.length) return null;
+  return data[0].acf as HeaderACF;
 } 

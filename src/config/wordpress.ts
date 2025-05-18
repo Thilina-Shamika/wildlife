@@ -9,6 +9,7 @@ export const API_ENDPOINTS = {
   media: `${WORDPRESS_API_URL}/media`,
   acf: `${WORDPRESS_API_URL}/acf/v3`,
   forms: `${WORDPRESS_API_URL}/wpforms/v1/forms`,
+  menu: `${WORDPRESS_API_URL}/menu`,
 } as const;
 
 export const DEFAULT_HEADERS = {
